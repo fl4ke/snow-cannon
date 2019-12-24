@@ -19,8 +19,8 @@ console.log(
 );
 
 program
-    .version('0.0.1')
-    .description("An example CLI for ordering pizza's")
+    .version('0.0.2')
+    .description("Command line tool to troubleshoot curvy")
     .option('-r, --round', 'Get Current round info')
     .option('-i, --info <address>', 'Get player stats')
     .parse(process.argv);
