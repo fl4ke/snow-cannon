@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+declare const chalk: any;
+declare const clear: any;
+declare const figlet: any;
+declare const program: any;
+declare const TronWeb: any;
+declare const TronGrid: any;
+declare const CURVY_ADDR = "TWjkoz18Y48SgWoxEeGG11ezCCzee8wo1A";
+declare const TRON_NODE = "https://api.trongrid.io";
+declare const SOLIDITY_NODE = "https://api.trongrid.io";
+declare const tronWeb: any;
+declare const tronGrid: any;
+declare const main: () => Promise<void>;
+declare const displayBalances: (userAddress: string) => Promise<void>;
+declare const displayCurrentRoundInfo: () => Promise<void>;
+declare const getPlayerInfo: (contract: any, userAddress: string) => Promise<any>;
+declare const getPlayerMetadata: (contract: any, userAddress: string) => Promise<any>;
+declare const getCurrentRoundNumber: (contract: any) => Promise<any>;
+declare const getDividendsOf: (contract: any, userAddress: string, currentRoundNumber: number, includeBonus?: boolean) => Promise<any>;
+declare const getCurrentRoundInfoData: (contract: any) => Promise<any>;
+declare const formatNumber: (n: number) => string;
