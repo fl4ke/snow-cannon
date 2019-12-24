@@ -3,9 +3,11 @@ declare const chalk: any;
 declare const clear: any;
 declare const figlet: any;
 declare const program: any;
+declare const ethers: any;
 declare const TronWeb: any;
 declare const TronGrid: any;
 declare const CURVY_ADDR = "TWjkoz18Y48SgWoxEeGG11ezCCzee8wo1A";
+declare const VANITY_CONTRACT = "TV7DiSukGoP1h5KswfWVk9LWgED6sSxTt8";
 declare const TRON_NODE = "https://api.trongrid.io";
 declare const SOLIDITY_NODE = "https://api.trongrid.io";
 declare const tronWeb: any;
@@ -18,4 +20,5 @@ declare const getPlayerMetadata: (contract: any, userAddress: string) => Promise
 declare const getCurrentRoundNumber: (contract: any) => Promise<any>;
 declare const getDividendsOf: (contract: any, userAddress: string, currentRoundNumber: number, includeBonus?: boolean) => Promise<any>;
 declare const getCurrentRoundInfoData: (contract: any) => Promise<any>;
+declare const resolveRefName: (contract: any, userAddress: string) => Promise<any>;
 declare const formatNumber: (n: number) => string;

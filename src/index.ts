@@ -4,10 +4,12 @@ const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
 const program = require('commander');
+const ethers = require('ethers');
 const TronWeb = require('tronweb');
 const TronGrid = require('trongrid');
 
 const CURVY_ADDR = "TWjkoz18Y48SgWoxEeGG11ezCCzee8wo1A";
+const VANITY_CONTRACT = "TV7DiSukGoP1h5KswfWVk9LWgED6sSxTt8";
 const TRON_NODE = "https://api.trongrid.io";
 const SOLIDITY_NODE = "https://api.trongrid.io";
 
@@ -62,6 +64,17 @@ const displayBalances = async (userAddress: string) => {
 
     const userBalance = await tronWeb.trx.getBalance(userAddress);
     console.log(`Players wallet balance: ${ formatNumber(userBalance / 1000000) } trx`);
+
+    try {
+        const contract = await tronWeb
+            .contract()
+            .at(VANITY_CONTRACT);
+
+        const vanity = await resolveRefName(contract, userAddress);
+        console.log(`Players Vanity Name: ${vanity}`);
+    } catch (e) {
+        console.log(e);
+    }
 
     const currentRoundNumber = await getCurrentRoundNumber(contract);
     const dividendsOf = await getDividendsOf(contract, userAddress, currentRoundNumber);
@@ -121,6 +134,11 @@ const getDividendsOf = async (contract: any, userAddress: string, currentRoundNu
 
 const getCurrentRoundInfoData = async (contract: any) => {
     return await contract.currentRoundData().call();
+};
+
+const resolveRefName = async (contract: any, userAddress: string) => {
+    const resp = await contract.resolveToName(userAddress).call();
+    return ethers.utils.parseBytes32String(resp);
 };
 
 const formatNumber = (n: number): string => {

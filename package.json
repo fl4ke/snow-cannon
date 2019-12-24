@@ -19,8 +19,9 @@
     "@types/clear": "^0.1.0",
     "chalk": "^3.0.0",
     "clear": "^0.1.0",
-    "figlet": "^1.2.4",
     "commander": "^4.0.1",
+    "ethers": "^4.0.41",
+    "figlet": "^1.2.4",
     "trongrid": "^1.2.4",
     "tronweb": "^2.8.1",
     "yargs": "^15.0.2"
