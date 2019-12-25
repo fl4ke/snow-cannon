@@ -28,11 +28,11 @@ console.log(
 );
 
 program
-    .version('0.0.2')
-    .description("Command line tool to troubleshoot curvy")
+    .version('0.0.3')
+    .description("Command line tool to troubleshoot just.game")
     .option('-r, --round', 'Get Current round info')
     .option('-i, --info <address>', 'Get player stats')
-    .option('-t, --transactions <address>', 'Get recen just.game transactions')
+    .option('-t, --transactions <address>', 'Get recent just.game related transactions')
     .parse(process.argv);
 
 
