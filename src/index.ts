@@ -122,19 +122,20 @@ const displayBalances = async (user: string) => {
 
     const currentRoundNumber = await getCurrentRoundNumber(contract);
     const dividends = await getDividendsOf(contract, userAddress, currentRoundNumber, false);
-    const playerMetadataOf = await getPlayerMetadata(contract, userAddress);
-    const players = await getPlayerInfo(contract, userAddress);
+    const playerMetadata = await getPlayerMetadata(contract, userAddress);
+    const player = await getPlayerInfo(contract, userAddress);
 
     console.log(`Player stats: 
      earnings: ${ formatNumber(dividends) } trx
-     ticketsOwned: ${ formatNumber(playerMetadataOf.ticketsOwned) },
-     experienceTotal: ${ formatNumber(players.experienceTotal) },
-     experienceNextRound: ${ formatNumber(players.experienceNextRound) }
-     experienceToSpend: ${ formatNumber(players.experienceToSpend) }
-     automaticallyUpgrade: ${ players.automaticallyUpgrade }
-     lastInteraction: ${ players.lastInteraction }
-     Position: ${ formatNumber(playerMetadataOf.myPosition) }
-     backing: ${ formatNumber(playerMetadataOf.backing) }`);
+     refEarnings: ${ formatNumber(player.squadEarnings)} trx
+     ticketsOwned: ${ formatNumber(playerMetadata.ticketsOwned) },
+     experienceTotal: ${ formatNumber(player.experienceTotal) },
+     experienceNextRound: ${ formatNumber(player.experienceNextRound) }
+     experienceToSpend: ${ formatNumber(player.experienceToSpend) }
+     automaticallyUpgrade: ${ player.automaticallyUpgrade }
+     lastInteraction: ${ player.lastInteraction }
+     Position: ${ formatNumber(playerMetadata.myPosition) }
+     backing: ${ formatNumber(playerMetadata.backing) }`);
 };
 
 const displayCurrentRoundInfo = async () => {
@@ -207,6 +208,7 @@ const getPlayerInfo = async (contract: any, userAddress: string) => {
         experienceToSpend: data.experienceToSpend / CONVERSION_FACTOR,
         automaticallyUpgrade: data.automaticallyUpgrade,
         lastInteraction: new Date(data.lastInteraction * MS_IN_SECOND),
+        squadEarnings: data.squadEarnings / CONVERSION_FACTOR,
     };
 };
 

@@ -29,6 +29,7 @@ declare const getPlayerInfo: (contract: any, userAddress: string) => Promise<{
     experienceToSpend: number;
     automaticallyUpgrade: any;
     lastInteraction: Date;
+    squadEarnings: number;
 }>;
 declare const getPlayerMetadata: (contract: any, userAddress: string) => Promise<{
     ticketsOwned: number;
