@@ -121,12 +121,12 @@ const displayBalances = async (user: string) => {
     }
 
     const currentRoundNumber = await getCurrentRoundNumber(contract);
-    const dividendsOf = await getDividendsOf(contract, userAddress, currentRoundNumber);
+    const dividends = await getDividendsOf(contract, userAddress, currentRoundNumber, false);
     const playerMetadataOf = await getPlayerMetadata(contract, userAddress);
     const players = await getPlayerInfo(contract, userAddress);
 
     console.log(`Player stats: 
-     current earnings: ${ formatNumber(dividendsOf) } trx
+     earnings: ${ formatNumber(dividends) } trx
      ticketsOwned: ${ formatNumber(playerMetadataOf.ticketsOwned) },
      experienceTotal: ${ formatNumber(players.experienceTotal) },
      experienceNextRound: ${ formatNumber(players.experienceNextRound) }
@@ -219,13 +219,13 @@ const getPlayerMetadata = async (contract: any, userAddress: string) => {
     }
 };
 
-const getCurrentRoundNumber = async (contract: any) => {
+const getCurrentRoundNumber = async (contract: any): Promise<number> => {
     return await contract.currentRoundNumber().call();
 };
 
 const getDividendsOf = async (contract: any, userAddress: string, currentRoundNumber: number,
-                              includeBonus: boolean = true) => {
-    return (await contract.dividendsOf(currentRoundNumber, userAddress, includeBonus).call()) / CONVERSION_FACTOR;
+                              include2XBonus: boolean = false): Promise<number> => {
+    return (await contract.dividendsOf(currentRoundNumber, userAddress, include2XBonus).call()) / CONVERSION_FACTOR;
 };
 
 const getCurrentRoundInfoData = async (contract: any) => {

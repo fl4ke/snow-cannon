@@ -35,8 +35,8 @@ declare const getPlayerMetadata: (contract: any, userAddress: string) => Promise
     myPosition: any;
     backing: number;
 }>;
-declare const getCurrentRoundNumber: (contract: any) => Promise<any>;
-declare const getDividendsOf: (contract: any, userAddress: string, currentRoundNumber: number, includeBonus?: boolean) => Promise<number>;
+declare const getCurrentRoundNumber: (contract: any) => Promise<number>;
+declare const getDividendsOf: (contract: any, userAddress: string, currentRoundNumber: number, include2XBonus?: boolean) => Promise<number>;
 declare const getCurrentRoundInfoData: (contract: any) => Promise<{
     endsAt: Date;
     grandPrize: number;
