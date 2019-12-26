@@ -34,9 +34,9 @@ program
     .version('0.0.4')
     .description("Command line tool to troubleshoot just.game")
     .option('-r, --round', 'Get Current round info')
-    .option('-i, --info <address>', 'Get player stats')
+    .option('-i, --info <address|vanity>', 'Get player stats')
     .option('-v, --vanity <name>', 'Get player address for given vanity name')
-    .option('-t, --transactions <address>', 'Get recent just.game related transactions')
+    .option('-t, --transactions <address|vanity>', 'Get recent just.game related transactions')
     .parse(process.argv);
 
 
@@ -51,7 +51,6 @@ const tronGrid = new TronGrid(tronWeb);
 
 const main = async () => {
     if (program.info) {
-        console.log(program.info);
         try {
             await displayBalances(program.info);
         } catch (e) {
@@ -85,7 +84,23 @@ const formatNumber = (n: number): string => {
     return n.toLocaleString();
 };
 
-const displayBalances = async (userAddress: string) => {
+const displayBalances = async (user: string) => {
+    let userAddress;
+    if (user.charAt(0) === 'T') {
+        userAddress = user;
+    } else {
+        const contract = await tronWeb
+            .contract()
+            .at(contracts.vanity.address);
+        const address = await resolveAddress(contract, user.trim());
+        if (address) {
+            userAddress = address;
+            console.log(`Player's ref name: ${user}`);
+            console.log(`User's address: ${address}`);
+        } else {
+            return console.error(`Couldn't find user: ${user}`);
+        }
+    }
     tronWeb.setAddress(userAddress);
 
     const contract = await tronWeb
@@ -95,14 +110,14 @@ const displayBalances = async (userAddress: string) => {
     const userBalance = await getTronBalance(userAddress);
     console.log(`Players wallet balance: ${ formatNumber(userBalance) } trx`);
 
-    try {
+    if (user === userAddress) {
         const contract = await tronWeb
             .contract()
             .at(contracts.vanity.address);
-
         const vanity = await resolveRefName(contract, userAddress);
-        console.log(`Player's Vanity Name: ${ vanity }`);
-    } catch (e) {
+        if (vanity) {
+            console.log(`Player's Vanity Name: ${ vanity }`);
+        }
     }
 
     const currentRoundNumber = await getCurrentRoundNumber(contract);
@@ -145,7 +160,22 @@ const displayCurrentRoundInfo = async () => {
      totalTronPledged: ${ formatNumber(currentRoundData.totalTronPledged) }`);
 };
 
-const displayRecentTransactions = async (address: string) => {
+const displayRecentTransactions = async (user: string) => {
+    let address;
+    if (user.charAt(0) === 'T') {
+        address = user;
+    } else {
+        const contract = await tronWeb
+            .contract()
+            .at(contracts.vanity.address);
+        const resp = await resolveAddress(contract, user.trim());
+        if (resp) {
+            address = resp;
+            console.log(`User's address: ${address}`);
+        } else {
+            return console.error(`Couldn't find user: ${user}`);
+        }
+    }
     const transactions = await getRecentTransactionData(address);
     if (transactions) {
         console.log(`Recent transactions:`);

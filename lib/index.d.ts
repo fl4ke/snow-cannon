@@ -19,9 +19,9 @@ declare const tronWeb: any;
 declare const tronGrid: any;
 declare const main: () => Promise<void>;
 declare const formatNumber: (n: number) => string;
-declare const displayBalances: (userAddress: string) => Promise<void>;
+declare const displayBalances: (user: string) => Promise<void>;
 declare const displayCurrentRoundInfo: () => Promise<void>;
-declare const displayRecentTransactions: (address: string) => Promise<void>;
+declare const displayRecentTransactions: (user: string) => Promise<void>;
 declare const displayAddressFromVanity: (vanity: string) => Promise<void>;
 declare const getPlayerInfo: (contract: any, userAddress: string) => Promise<{
     experienceTotal: number;

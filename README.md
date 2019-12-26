@@ -14,10 +14,10 @@ Usage: snow-cannon [options]
 Command line tool to troubleshoot just.game
 
 Options:
-  -V, --version                 output the version number
-  -r, --round                   Get Current round info
-  -i, --info <address>          Get player stats
-  -t, --transactions <address>  Get recent just.game related transactions
-  -h, --help                    output usage information
-
+  -V, --version                        output the version number
+  -r, --round                          Get Current round info
+  -i, --info <address|vanity>          Get player stats
+  -v, --vanity <name>                  Get player address for given vanity name
+  -t, --transactions <address|vanity>  Get recent just.game related transactions
+  -h, --help                           output usage information
 ```
