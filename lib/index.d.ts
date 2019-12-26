@@ -22,6 +22,7 @@ declare const formatNumber: (n: number) => string;
 declare const displayBalances: (userAddress: string) => Promise<void>;
 declare const displayCurrentRoundInfo: () => Promise<void>;
 declare const displayRecentTransactions: (address: string) => Promise<void>;
+declare const displayAddressFromVanity: (vanity: string) => Promise<void>;
 declare const getPlayerInfo: (contract: any, userAddress: string) => Promise<{
     experienceTotal: number;
     experienceNextRound: number;
@@ -61,6 +62,7 @@ declare const getRecentTransactionData: (userAddress: string, limit?: number) =>
     }[];
 }[] | undefined>;
 declare const resolveRefName: (contract: any, userAddress: string) => Promise<any>;
+declare const resolveAddress: (contract: any, refName: string) => Promise<any>;
 declare const getTronBalance: (userAddress: string) => Promise<number>;
 declare const parseArguments: (inputs: any, args: any) => {
     name: number;

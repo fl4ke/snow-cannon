@@ -31,10 +31,11 @@ console.log(
 );
 
 program
-    .version('0.0.3')
+    .version('0.0.4')
     .description("Command line tool to troubleshoot just.game")
     .option('-r, --round', 'Get Current round info')
     .option('-i, --info <address>', 'Get player stats')
+    .option('-v, --vanity <name>', 'Get player address for given vanity name')
     .option('-t, --transactions <address>', 'Get recent just.game related transactions')
     .parse(process.argv);
 
@@ -71,6 +72,13 @@ const main = async () => {
             console.error(e);
         }
     }
+    if (program.vanity) {
+        try {
+            await displayAddressFromVanity(program.vanity);
+        } catch (e) {
+            console.error(e);
+        }
+    }
 };
 
 const formatNumber = (n: number): string => {
@@ -93,7 +101,7 @@ const displayBalances = async (userAddress: string) => {
             .at(contracts.vanity.address);
 
         const vanity = await resolveRefName(contract, userAddress);
-        console.log(`Players Vanity Name: ${ vanity }`);
+        console.log(`Player's Vanity Name: ${ vanity }`);
     } catch (e) {
     }
 
@@ -148,6 +156,17 @@ const displayRecentTransactions = async (address: string) => {
             }
         }
     }
+};
+
+const displayAddressFromVanity = async (vanity: string) => {
+    const contract = await tronWeb
+        .contract()
+        .at(contracts.vanity.address);
+        const address = await resolveAddress(contract, vanity.trim());
+        if (address) {
+            return console.log(`${vanity} is owned by: ${address}`);
+        }
+        console.log(`Couldn't retrieve address for ref name: ${vanity}`);
 };
 
 const getPlayerInfo = async (contract: any, userAddress: string) => {
@@ -236,6 +255,12 @@ const getRecentTransactionData = async (userAddress: string, limit: number = 200
 const resolveRefName = async (contract: any, userAddress: string) => {
     const resp = await contract.resolveToName(userAddress).call();
     return ethers.utils.parseBytes32String(resp);
+};
+
+const resolveAddress = async (contract: any, refName: string) => {
+    const bytes32 = ethers.utils.formatBytes32String(refName);
+    const address = await contract.resolveToAddress(bytes32).call();
+    return address === "410000000000000000000000000000000000000000" ? false : tronWeb.address.fromHex(address);
 };
 
 const getTronBalance = async (userAddress: string) => {
