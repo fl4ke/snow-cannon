@@ -21,6 +21,7 @@ CONTRACTS.set(contracts.curvy.contract, CURVY_INTERFACE);
 CONTRACTS.set(contracts.vanity.contract, VANITY_INTERFACE);
 
 const CONVERSION_FACTOR = 1000000;
+const MS_IN_SECOND = 1000;
 
 clear();
 console.log(
@@ -83,8 +84,8 @@ const displayBalances = async (userAddress: string) => {
         .contract()
         .at(contracts.curvy.address);
 
-    const userBalance = await tronWeb.trx.getBalance(userAddress);
-    console.log(`Players wallet balance: ${ formatNumber(userBalance / 1000000) } trx`);
+    const userBalance = await getTronBalance(userAddress);
+    console.log(`Players wallet balance: ${ formatNumber(userBalance) } trx`);
 
     try {
         const contract = await tronWeb
@@ -126,7 +127,7 @@ const displayCurrentRoundInfo = async () => {
      ticketsBought: ${ formatNumber(currentRoundData.ticketsBought) }
      ticketsRedeemed: ${ formatNumber(currentRoundData.ticketsRedeemed) }
      ticketsRedeemed / ticketsBought:  ${ formatNumber(currentRoundData.ticketsRedeemed /
-        currentRoundData.ticketsBought * 100) } %
+        currentRoundData.ticketsBought * 100) }%
      totalParticipants: ${ formatNumber(currentRoundData.totalParticipants) }
      hasEnded: ${ currentRoundData.hasEnded }
      unredeemedBacking: ${ formatNumber(currentRoundData.unredeemedBacking) }
@@ -156,7 +157,7 @@ const getPlayerInfo = async (contract: any, userAddress: string) => {
         experienceNextRound: data.experienceNextRound / CONVERSION_FACTOR,
         experienceToSpend: data.experienceToSpend / CONVERSION_FACTOR,
         automaticallyUpgrade: data.automaticallyUpgrade,
-        lastInteraction: new Date(data.lastInteraction * 1000),
+        lastInteraction: new Date(data.lastInteraction * MS_IN_SECOND),
     };
 };
 
@@ -181,7 +182,7 @@ const getDividendsOf = async (contract: any, userAddress: string, currentRoundNu
 const getCurrentRoundInfoData = async (contract: any) => {
     const data = await contract.currentRoundData().call();
     return {
-        endsAt: new Date(data.endsAt * 1000),
+        endsAt: new Date(data.endsAt * MS_IN_SECOND),
         grandPrize: data.grandPrize / CONVERSION_FACTOR,
         leaderBonus: data.leaderBonus / CONVERSION_FACTOR,
         ticketsBought: data.ticketsBought / CONVERSION_FACTOR,
@@ -221,7 +222,7 @@ const getRecentTransactionData = async (userAddress: string, limit: number = 200
                     }
                     data.push({
                         status: tx.ret[0].code,
-                        value: formatNumber(callValue / 1000000),
+                        value: formatNumber(callValue / CONVERSION_FACTOR),
                         operation: decodedTx.name,
                         inputs: parseArguments(funcAbi.inputs, decodedTx.args),
                     });
@@ -235,6 +236,10 @@ const getRecentTransactionData = async (userAddress: string, limit: number = 200
 const resolveRefName = async (contract: any, userAddress: string) => {
     const resp = await contract.resolveToName(userAddress).call();
     return ethers.utils.parseBytes32String(resp);
+};
+
+const getTronBalance = async (userAddress: string) => {
+    return (await tronWeb.trx.getBalance(userAddress) / CONVERSION_FACTOR);
 };
 
 const parseArguments = (inputs: any, args: any) => {

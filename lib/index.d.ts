@@ -14,6 +14,7 @@ declare const CURVY_INTERFACE: any;
 declare const VANITY_INTERFACE: any;
 declare const CONTRACTS: Map<any, any>;
 declare const CONVERSION_FACTOR = 1000000;
+declare const MS_IN_SECOND = 1000;
 declare const tronWeb: any;
 declare const tronGrid: any;
 declare const main: () => Promise<void>;
@@ -50,7 +51,7 @@ declare const getCurrentRoundInfoData: (contract: any) => Promise<{
     roundNumber: any;
     totalTronPledged: number;
 }>;
-declare const getRecentTransactionData: (userAddress: string) => Promise<{
+declare const getRecentTransactionData: (userAddress: string, limit?: number) => Promise<{
     status: any;
     value: string;
     operation: any;
@@ -60,6 +61,7 @@ declare const getRecentTransactionData: (userAddress: string) => Promise<{
     }[];
 }[] | undefined>;
 declare const resolveRefName: (contract: any, userAddress: string) => Promise<any>;
+declare const getTronBalance: (userAddress: string) => Promise<number>;
 declare const parseArguments: (inputs: any, args: any) => {
     name: number;
     value: any;
