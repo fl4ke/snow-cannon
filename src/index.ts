@@ -20,6 +20,8 @@ const CONTRACTS = new Map();
 CONTRACTS.set(contracts.curvy.contract, CURVY_INTERFACE);
 CONTRACTS.set(contracts.vanity.contract, VANITY_INTERFACE);
 
+const CONVERSION_FACTOR = 1000000;
+
 clear();
 console.log(
     chalk.red(
@@ -100,15 +102,15 @@ const displayBalances = async (userAddress: string) => {
     const players = await getPlayerInfo(contract, userAddress);
 
     console.log(`Player stats: 
-     current earnings: ${ formatNumber(dividendsOf / 1000000) } trx
-     ticketsOwned: ${ formatNumber(playerMetadataOf.ticketsOwned / 1000000) },
-     experienceTotal: ${ formatNumber(players.experienceTotal / 1000000) },
-     experienceNextRound: ${ formatNumber(players.experienceNextRound / 1000000) }
-     experienceToSpend: ${ formatNumber(players.experienceToSpend / 1000000) }
-     automaticallyUpgrade: ${ formatNumber(players.automaticallyUpgrade) }
-     lastInteraction: ${ new Date(players.lastInteraction * 1000) }
+     current earnings: ${ formatNumber(dividendsOf) } trx
+     ticketsOwned: ${ formatNumber(playerMetadataOf.ticketsOwned) },
+     experienceTotal: ${ formatNumber(players.experienceTotal) },
+     experienceNextRound: ${ formatNumber(players.experienceNextRound) }
+     experienceToSpend: ${ formatNumber(players.experienceToSpend) }
+     automaticallyUpgrade: ${ players.automaticallyUpgrade }
+     lastInteraction: ${ players.lastInteraction }
      Position: ${ formatNumber(playerMetadataOf.myPosition) }
-     backing: ${ formatNumber(playerMetadataOf.backing / 1000000) }`);
+     backing: ${ formatNumber(playerMetadataOf.backing) }`);
 };
 
 const displayCurrentRoundInfo = async () => {
@@ -118,19 +120,20 @@ const displayCurrentRoundInfo = async () => {
 
     const currentRoundData = await getCurrentRoundInfoData(contract);
     console.log(`currentRoundData:
-     endsAt: ${ new Date(currentRoundData.endsAt * 1000) },
-     grandPrize: ${ formatNumber(currentRoundData.grandPrize / 1000000) }
-     leaderBonus: ${ formatNumber(currentRoundData.leaderBonus / 1000000) }
-     ticketsBought: ${ formatNumber(currentRoundData.ticketsBought / 1000000) }
-     ticketsRedeemed: ${ formatNumber(currentRoundData.ticketsRedeemed / 1000000) }
+     endsAt: ${ currentRoundData.endsAt },
+     grandPrize: ${ formatNumber(currentRoundData.grandPrize) }
+     leaderBonus: ${ formatNumber(currentRoundData.leaderBonus) }
+     ticketsBought: ${ formatNumber(currentRoundData.ticketsBought) }
+     ticketsRedeemed: ${ formatNumber(currentRoundData.ticketsRedeemed) }
+     ticketsRedeemed / ticketsBought:  ${ formatNumber(currentRoundData.ticketsRedeemed /
+        currentRoundData.ticketsBought * 100) } %
      totalParticipants: ${ formatNumber(currentRoundData.totalParticipants) }
      hasEnded: ${ currentRoundData.hasEnded }
-     unredeemedBacking: ${ formatNumber(currentRoundData.unredeemedBacking / 1000000) }
-     bombValue: ${ formatNumber(currentRoundData.bombValue / 1000000) }
-     bombFuseCounter: ${ formatNumber(currentRoundData.bombFuseCounter / 1000000) }
-     totalTransactionCount: ${ formatNumber(currentRoundData.totalTransactionCount) }
+     unredeemedBacking: ${ formatNumber(currentRoundData.unredeemedBacking) }
+     bombValue: ${ formatNumber(currentRoundData.bombValue) }
+     bombFuseCounter: ${ formatNumber(currentRoundData.bombFuseCounter) }
      roundNumber: ${ formatNumber(currentRoundData.roundNumber) }
-     totalTronPledged: ${ formatNumber(currentRoundData.totalTronPledged / 1000000) }`);
+     totalTronPledged: ${ formatNumber(currentRoundData.totalTronPledged) }`);
 };
 
 const displayRecentTransactions = async (address: string) => {
@@ -147,11 +150,23 @@ const displayRecentTransactions = async (address: string) => {
 };
 
 const getPlayerInfo = async (contract: any, userAddress: string) => {
-    return await contract.Players(userAddress).call();
+    const data = await contract.Players(userAddress).call();
+    return {
+        experienceTotal: data.experienceTotal / CONVERSION_FACTOR,
+        experienceNextRound: data.experienceNextRound / CONVERSION_FACTOR,
+        experienceToSpend: data.experienceToSpend / CONVERSION_FACTOR,
+        automaticallyUpgrade: data.automaticallyUpgrade,
+        lastInteraction: new Date(data.lastInteraction * 1000),
+    };
 };
 
 const getPlayerMetadata = async (contract: any, userAddress: string) => {
-    return await contract.playerMetadataOf(userAddress).call();
+    const data = await contract.playerMetadataOf(userAddress).call();
+    return {
+        ticketsOwned: data.ticketsOwned / CONVERSION_FACTOR,
+        myPosition: data.myPosition,
+        backing: data.backing / CONVERSION_FACTOR,
+    }
 };
 
 const getCurrentRoundNumber = async (contract: any) => {
@@ -160,18 +175,33 @@ const getCurrentRoundNumber = async (contract: any) => {
 
 const getDividendsOf = async (contract: any, userAddress: string, currentRoundNumber: number,
                               includeBonus: boolean = true) => {
-    return await contract.dividendsOf(currentRoundNumber, userAddress, includeBonus).call();
+    return (await contract.dividendsOf(currentRoundNumber, userAddress, includeBonus).call()) / CONVERSION_FACTOR;
 };
 
 const getCurrentRoundInfoData = async (contract: any) => {
-    return await contract.currentRoundData().call();
+    const data = await contract.currentRoundData().call();
+    return {
+        endsAt: new Date(data.endsAt * 1000),
+        grandPrize: data.grandPrize / CONVERSION_FACTOR,
+        leaderBonus: data.leaderBonus / CONVERSION_FACTOR,
+        ticketsBought: data.ticketsBought / CONVERSION_FACTOR,
+        ticketsRedeemed: data.ticketsRedeemed / CONVERSION_FACTOR,
+        totalParticipants: data.totalParticipants,
+        hasEnded: data.hasEnded,
+        unredeemedBacking: data.unredeemedBacking / CONVERSION_FACTOR,
+        bombValue: data.bombValue / CONVERSION_FACTOR,
+        bombFuseCounter: data.bombFuseCounter / CONVERSION_FACTOR,
+        totalTransactionCount: data.totalTransactionCount,
+        roundNumber: data.roundNumber,
+        totalTronPledged: data.totalTronPledged / CONVERSION_FACTOR,
+    };
 };
 
-const getRecentTransactionData = async (userAddress: string) => {
+const getRecentTransactionData = async (userAddress: string, limit: number = 200) => {
     let data = [];
     const options = {
         method: 'GET',
-        uri: `https://api.trongrid.io/v1/accounts/${ userAddress }/transactions?only_from=true&limit=200`,
+        uri: `https://api.trongrid.io/v1/accounts/${ userAddress }/transactions?only_from=true&limit=${ limit }`,
         json: true,
     };
     const resp = await rp(options);
@@ -200,7 +230,7 @@ const getRecentTransactionData = async (userAddress: string) => {
         }
         return data;
     }
-}
+};
 
 const resolveRefName = async (contract: any, userAddress: string) => {
     const resp = await contract.resolveToName(userAddress).call();

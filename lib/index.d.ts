@@ -13,6 +13,7 @@ declare const SOLIDITY_NODE = "https://api.trongrid.io";
 declare const CURVY_INTERFACE: any;
 declare const VANITY_INTERFACE: any;
 declare const CONTRACTS: Map<any, any>;
+declare const CONVERSION_FACTOR = 1000000;
 declare const tronWeb: any;
 declare const tronGrid: any;
 declare const main: () => Promise<void>;
@@ -20,11 +21,35 @@ declare const formatNumber: (n: number) => string;
 declare const displayBalances: (userAddress: string) => Promise<void>;
 declare const displayCurrentRoundInfo: () => Promise<void>;
 declare const displayRecentTransactions: (address: string) => Promise<void>;
-declare const getPlayerInfo: (contract: any, userAddress: string) => Promise<any>;
-declare const getPlayerMetadata: (contract: any, userAddress: string) => Promise<any>;
+declare const getPlayerInfo: (contract: any, userAddress: string) => Promise<{
+    experienceTotal: number;
+    experienceNextRound: number;
+    experienceToSpend: number;
+    automaticallyUpgrade: any;
+    lastInteraction: Date;
+}>;
+declare const getPlayerMetadata: (contract: any, userAddress: string) => Promise<{
+    ticketsOwned: number;
+    myPosition: any;
+    backing: number;
+}>;
 declare const getCurrentRoundNumber: (contract: any) => Promise<any>;
-declare const getDividendsOf: (contract: any, userAddress: string, currentRoundNumber: number, includeBonus?: boolean) => Promise<any>;
-declare const getCurrentRoundInfoData: (contract: any) => Promise<any>;
+declare const getDividendsOf: (contract: any, userAddress: string, currentRoundNumber: number, includeBonus?: boolean) => Promise<number>;
+declare const getCurrentRoundInfoData: (contract: any) => Promise<{
+    endsAt: Date;
+    grandPrize: number;
+    leaderBonus: number;
+    ticketsBought: number;
+    ticketsRedeemed: number;
+    totalParticipants: any;
+    hasEnded: any;
+    unredeemedBacking: number;
+    bombValue: number;
+    bombFuseCounter: number;
+    totalTransactionCount: any;
+    roundNumber: any;
+    totalTronPledged: number;
+}>;
 declare const getRecentTransactionData: (userAddress: string) => Promise<{
     status: any;
     value: string;
